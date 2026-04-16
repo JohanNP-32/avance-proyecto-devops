@@ -38,7 +38,8 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.micro
-      ImageId: ami-0022f773189ff703d # Amazon Linux 2
+      ImageId: ami-0440d3b780d96b29d
+      KeyName: vockey
       SecurityGroupIds:
         - !Ref InstanceSecurityGroup
       Tags:
