@@ -1,3 +1,4 @@
 #!/bin/bash
 cd "$(dirname "$0")"
-docker-compose start
+docker-compose up -d
+echo "Aplicación iniciada en segundo plano."
