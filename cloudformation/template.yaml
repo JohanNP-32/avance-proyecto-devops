@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Infraestructura para Proyecto DevOps - EC2 y S3
+
+Resources:
+  # Requerimiento: Creación de S3
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "proyecto-devops-storage-${AWS::AccountId}"
+
+  # ¿Cómo se deben configurar los Security Groups para permitir acceso a la aplicación?
+  # Para permitir el acceso a la aplicación, los Security Groups deben configurarse con reglas de entrada.
+  # Se debe permitir el tráfico TCP en los puertos específicos donde corre la app:
+  # - Puerto 5173: Para que los usuarios accedan a la interfaz de Vite (Frontend).
+  # - Puerto 8080: Para que el Frontend pueda comunicarse con la API de Express (Backend).
+  # - Puerto 22: Para permitir la administración remota vía SSH.
+  # Es recomendable usar el CIDR 0.0.0.0/0 solo para pruebas (como en este proyecto).
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Permitir acceso a puertos 5173, 8080 y 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 5173
+          ToPort: 5173
+          CidrIp: 0.0.0.0/0
+
+  # Requerimiento: Creación de EC2
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0022f773189ff703d # Amazon Linux 2
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+      Tags:
+        - Key: Name
+          Value: Servidor-Proyecto-DevOps

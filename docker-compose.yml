@@ -1,36 +1,45 @@
-version: "3.8"
-
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
+  db:
+    image: mysql:8.4
+    container_name: demo-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: demo_db
+      MYSQL_USER: demo_user
+      MYSQL_PASSWORD: demo_pass
     ports:
-      - "27017:27017"
+      - "3307:3306"
     volumes:
-      - mongo_data:/data/db
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   backend:
     build: ./backend
-    container_name: backend_app
-    ports:
-      - "8080:8080"
+    container_name: demo-backend
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/bitacora
-      - PORT=8080
+      DB_HOST: db
+      DB_USER: demo_user
+      DB_PASSWORD: demo_pass
+      DB_NAME: demo_db
+      DB_PORT: 3306
+      PORT: 3000
+    ports:
+      - "3000:3000"
     depends_on:
-      - mongodb
-    volumes:
-      - ./backend/logs:/app/logs
+      db:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
-    container_name: frontend_app
+    container_name: demo-frontend
     ports:
       - "5173:5173"
-    environment:
-      - VITE_API_URL=http://localhost:8080
     depends_on:
       - backend
 
 volumes:
-  mongo_data:
+  db_data:
