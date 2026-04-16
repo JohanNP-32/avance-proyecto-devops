@@ -12,7 +12,7 @@ Resources:
   # Para permitir el acceso a la aplicación, los Security Groups deben configurarse con reglas de entrada.
   # Se debe permitir el tráfico TCP en los puertos específicos donde corre la app:
   # - Puerto 5173: Para que los usuarios accedan a la interfaz de Vite (Frontend).
-  # - Puerto 8080: Para que el Frontend pueda comunicarse con la API de Express (Backend).
+  # - Puerto 3000: Para que el Frontend pueda comunicarse con la API de Express (Backend).
   # - Puerto 22: Para permitir la administración remota vía SSH.
   # Es recomendable usar el CIDR 0.0.0.0/0 solo para pruebas (como en este proyecto).
   InstanceSecurityGroup:
@@ -25,8 +25,8 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
+          FromPort: 3000
+          ToPort: 3000
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 5173
